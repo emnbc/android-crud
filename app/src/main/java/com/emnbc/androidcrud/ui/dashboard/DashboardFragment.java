@@ -15,6 +15,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.emnbc.androidcrud.R;
+import com.emnbc.androidcrud.models.Item;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -81,7 +83,13 @@ public class DashboardFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            textView.setText(s);
+
+            Gson gson = new Gson();
+            Item[] userArray = gson.fromJson(s, Item[].class);
+            textView.setText(
+                    "1 - " + userArray[0].getName() + "\n" +
+                    "2 - " + userArray[1].getName()
+            );
         }
     }
 }
