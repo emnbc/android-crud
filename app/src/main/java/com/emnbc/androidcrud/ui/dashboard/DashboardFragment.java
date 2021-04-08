@@ -34,7 +34,7 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
     private DashboardViewModel dashboardViewModel;
     private Button btn;
     private TextView textView;
-    private ArrayList<String> animalNames;
+    private ArrayList<String> itemNames;
     private RecyclerView recyclerView;
     private ItemViewAdapter adapter;
 
@@ -50,17 +50,17 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
             }
         });
 
-        animalNames = new ArrayList<>();
+        itemNames = new ArrayList<>();
 
-//        animalNames.add("Horse");
-//        animalNames.add("Cow");
-//        animalNames.add("Camel");
-//        animalNames.add("Sheep");
-//        animalNames.add("Goat");
+//        itemNames.add("Horse");
+//        itemNames.add("Cow");
+//        itemNames.add("Camel");
+//        itemNames.add("Sheep");
+//        itemNames.add("Goat");
 
         recyclerView = root.findViewById(R.id.rvItems);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ItemViewAdapter(getContext(), animalNames);
+        adapter = new ItemViewAdapter(getContext(), itemNames);
         // adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -113,13 +113,13 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
             Gson gson = new Gson();
             Item[] userArray = gson.fromJson(s, Item[].class);
 
-            animalNames.clear();
+            itemNames.clear();
 
             for(int i = 0; i < userArray.length; i++) {
-                animalNames.add(userArray[i].getName());
+                itemNames.add(userArray[i].getName());
             }
 
-            adapter = new ItemViewAdapter(getContext(), animalNames);
+            adapter = new ItemViewAdapter(getContext(), itemNames);
             adapter.setClickListener(DashboardFragment.this);
             recyclerView.setAdapter(adapter);
 
