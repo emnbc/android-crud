@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.emnbc.androidcrud.R;
+import com.emnbc.androidcrud.models.Item;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,12 +15,12 @@ import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ViewHolder> {
 
-    private List<String> mData;
+    private List<Item> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    ItemViewAdapter(Context context, List<String> data) {
+    ItemViewAdapter(Context context, List<Item> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -34,8 +35,9 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ViewHo
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = mData.get(position);
-        holder.myTextView.setText(animal);
+        Item item = mData.get(position);
+        holder.myTextView.setText(item.getName());
+        holder.itemId.setText("Item ID: " + item.getId());
     }
 
     // total number of rows
@@ -48,10 +50,12 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ViewHo
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
+        TextView itemId;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.itemRowName);
+            itemId = itemView.findViewById(R.id.itemRowId);
             itemView.setOnClickListener(this);
         }
 
@@ -62,7 +66,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ViewHo
     }
 
     // convenience method for getting data at click position
-    String getItem(int id) {
+    Item getItem(int id) {
         return mData.get(id);
     }
 

@@ -6,14 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,37 +27,19 @@ import okhttp3.Response;
 public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemClickListener {
 
     private View root;
-    private DashboardViewModel dashboardViewModel;
     private Button btn;
-    private TextView textView;
-    private ArrayList<String> itemNames;
+    private ArrayList<Item> itemNames;
     private RecyclerView recyclerView;
     private ItemViewAdapter adapter;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         root = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
         itemNames = new ArrayList<>();
-
-//        itemNames.add("Horse");
-//        itemNames.add("Cow");
-//        itemNames.add("Camel");
-//        itemNames.add("Sheep");
-//        itemNames.add("Goat");
-
         recyclerView = root.findViewById(R.id.rvItems);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ItemViewAdapter(getContext(), itemNames);
-        // adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
         addListenerOnButton(root);
@@ -100,7 +78,6 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
                 response = httpClient.newCall(request).execute();
                 return response.body().string();
             } catch (IOException e) {
-                textView.setText("Fuck");
                 e.printStackTrace();
             }
             return null;
@@ -111,22 +88,17 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
             super.onPostExecute(s);
 
             Gson gson = new Gson();
-            Item[] userArray = gson.fromJson(s, Item[].class);
+            Item[] itemsArray = gson.fromJson(s, Item[].class);
 
             itemNames.clear();
 
-            for(int i = 0; i < userArray.length; i++) {
-                itemNames.add(userArray[i].getName());
+            for(int i = 0; i < itemsArray.length; i++) {
+                itemNames.add(itemsArray[i]);
             }
 
             adapter = new ItemViewAdapter(getContext(), itemNames);
             adapter.setClickListener(DashboardFragment.this);
             recyclerView.setAdapter(adapter);
-
-//            textView.setText(
-//                    "1 - " + userArray[0].getName() + "\n" +
-//                    "2 - " + userArray[1].getName()
-//            );
         }
     }
 }
