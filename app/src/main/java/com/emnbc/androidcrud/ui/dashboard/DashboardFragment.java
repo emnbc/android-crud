@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
     private ArrayList<Item> itemNames;
     private RecyclerView recyclerView;
     private ItemViewAdapter adapter;
+    private ProgressBar progressBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -38,6 +40,7 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
 
         itemNames = new ArrayList<>();
         recyclerView = root.findViewById(R.id.rvItems);
+        progressBar = root.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ItemViewAdapter(getContext(), itemNames);
         recyclerView.setAdapter(adapter);
@@ -64,6 +67,12 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
     }
 
     class AsyncRequest extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected String doInBackground(String... arg) {
@@ -99,6 +108,8 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
             adapter = new ItemViewAdapter(getContext(), itemNames);
             adapter.setClickListener(DashboardFragment.this);
             recyclerView.setAdapter(adapter);
+
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 }
