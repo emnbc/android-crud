@@ -5,6 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.emnbc.androidcrud.services.RunTimer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,9 +18,12 @@ import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
+    private RunTimer runTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        runTimer = new RunTimer(this);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -33,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+        // startSending();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // stopSending();
     }
 
     @Override
@@ -53,5 +64,17 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    public RunTimer getRunTimer() {
+        return runTimer;
+    }
+
+//    public void startSending() {
+//        runTimer.startSending();
+//    }
+//
+//    public void stopSending() {
+//        runTimer.stopSending();
+//    }
 
 }

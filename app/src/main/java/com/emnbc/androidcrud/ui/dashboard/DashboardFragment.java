@@ -27,8 +27,8 @@ import okhttp3.Response;
 
 public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemClickListener {
 
-    private View root;
-    private Button btn;
+    // private View root;
+    // private Button btn;
     private ArrayList<Item> itemNames;
     private RecyclerView recyclerView;
     private ItemViewAdapter adapter;
@@ -36,7 +36,7 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         itemNames = new ArrayList<>();
         recyclerView = root.findViewById(R.id.rvItems);
@@ -50,7 +50,7 @@ public class DashboardFragment extends Fragment implements ItemViewAdapter.ItemC
     }
 
     public void addListenerOnButton(View v) {
-        btn = (Button) v.findViewById(R.id.button2);
+        Button btn = (Button) v.findViewById(R.id.button2);
         btn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
