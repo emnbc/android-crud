@@ -9,6 +9,7 @@ public class RunTimer {
 
     private LayoutInflater mInflater;
     private Activity mActivity;
+    private Handler handler = new Handler();
     private Boolean isActive = false;
 
     public RunTimer(Activity activity) {
@@ -24,6 +25,7 @@ public class RunTimer {
     }
 
     public void stopSending() {
+        handler.removeCallbacksAndMessages(null);
         isActive = false;
     }
 
@@ -37,7 +39,7 @@ public class RunTimer {
                 public void run() {
                     if (isActive) {
                         Toast.makeText(mInflater.getContext(), "Test", Toast.LENGTH_SHORT).show();
-                        new Handler().postDelayed(
+                        handler.postDelayed(
                             new Runnable() {
                                 public void run() {
                                     sending();
