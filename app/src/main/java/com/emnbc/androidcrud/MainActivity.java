@@ -1,5 +1,6 @@
 package com.emnbc.androidcrud;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,12 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.emnbc.androidcrud.services.ForegroundService;
 import com.emnbc.androidcrud.services.RunTimer;
 import com.emnbc.androidcrud.services.Tracker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.v("PERMISSIONS", "OK");
+                    tracker.startGettingLocation();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -88,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
             // case blocks for other MenuItems (if any)
         }
         return true;
+    }
+
+    public void startForegroundService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+    public void stopForegroundService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        stopService(serviceIntent);
     }
 
     public RunTimer getRunTimer() {
