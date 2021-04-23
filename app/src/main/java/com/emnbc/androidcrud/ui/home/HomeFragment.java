@@ -1,5 +1,7 @@
 package com.emnbc.androidcrud.ui.home;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,18 +26,25 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private Button btn, btnStart, btnStop;
+    private TextView textView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        textView = root.findViewById(R.id.text_home);
+//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+//            }
+//        });
+
+        if (isMyServiceRunning(ForegroundService.class)) {
+            textView.setText("Running");
+        } else {
+            textView.setText("Stopped");
+        }
 
         addListenerOnButtons(root);
 
@@ -60,7 +69,10 @@ public class HomeFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((MainActivity) getActivity()).startForegroundService();
+                        if (!isMyServiceRunning(ForegroundService.class)) {
+                            ((MainActivity) getActivity()).startForegroundService();
+                            textView.setText("Running");
+                        }
                     }
                 }
         );
@@ -69,10 +81,23 @@ public class HomeFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((MainActivity) getActivity()).stopForegroundService();
+                        if (isMyServiceRunning(ForegroundService.class)) {
+                            ((MainActivity) getActivity()).stopForegroundService();
+                            textView.setText("Stopped");
+                        }
                     }
                 }
         );
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 //    public void startForegroundService() {
