@@ -1,8 +1,13 @@
 package com.emnbc.androidcrud;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     private RunTimer runTimer;
     private Tracker tracker;
+
+    private ForegroundService mService;
+    boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +62,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isMyServiceRunning(ForegroundService.class) && !mBound) {
+            bindService();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isMyServiceRunning(ForegroundService.class) && mBound) {
+            unbindService();
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -112,4 +137,51 @@ public class MainActivity extends AppCompatActivity {
     public Tracker getTracker() {
         return tracker;
     }
+
+    public Boolean getBound() {
+        return mBound;
+    }
+
+    public ForegroundService getMService() {
+        return mService;
+    }
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ForegroundService.ServiceBinder binder = (ForegroundService.ServiceBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
+
+    public boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void bindService() {
+        // Bind to LocalService
+        Intent intent = new Intent(this, ForegroundService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void unbindService() {
+        unbindService(connection);
+        mBound = false;
+        mService = null;
+    }
+
 }

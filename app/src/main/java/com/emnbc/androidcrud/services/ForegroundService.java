@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -16,7 +17,11 @@ import androidx.core.app.NotificationCompat;
 import com.emnbc.androidcrud.MainActivity;
 import com.emnbc.androidcrud.R;
 
+import java.util.Random;
+
 public class ForegroundService extends Service {
+    private final IBinder binder = new ServiceBinder();
+    private final Random mGenerator = new Random();
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
     @Override
@@ -52,7 +57,7 @@ public class ForegroundService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
     private void createNotificationChannel() {
@@ -66,4 +71,16 @@ public class ForegroundService extends Service {
             manager.createNotificationChannel(serviceChannel);
         }
     }
+
+    public class ServiceBinder extends Binder {
+        public ForegroundService getService() {
+            return ForegroundService.this;
+        }
+    }
+
+    public int getRandomNumber() {
+        return mGenerator.nextInt(100);
+    }
+
+
 }
